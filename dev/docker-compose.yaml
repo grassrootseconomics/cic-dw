@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:14-alpine
+    restart: unless-stopped
+    network_mode: "host"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=cic_dw
+    volumes:
+      - ./dev-data/postgres:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
