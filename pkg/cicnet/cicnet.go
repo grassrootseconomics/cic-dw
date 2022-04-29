@@ -22,6 +22,11 @@ func NewCicNet(rpcEndpoint string, tokenIndex common.Address) (*CicNet, error) {
 	}, nil
 }
 
-func (c *CicNet) Close() {
-	c.Close()
+func (c *CicNet) Close() error {
+	err := c.ethClient.Close()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
