@@ -2,22 +2,28 @@ module cic_dw
 
 go 1.18
 
+// https://github.com/btcsuite/btcd/issues/1839
+replace github.com/btcsuite/btcd => github.com/btcsuite/btcd v0.22.0-beta
+
+replace github.com/ethereum/go-ethereum => github.com/ethereum/go-ethereum v1.10.16
+
 require (
-	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/go-redis/redis/v8 v8.11.5 // indirect
-	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/uuid v1.3.0 // indirect
-	github.com/hibiken/asynq v0.23.0 // indirect
-	github.com/jmoiron/sqlx v1.3.5 // indirect
-	github.com/knadh/koanf v1.4.1 // indirect
-	github.com/mitchellh/copystructure v1.2.0 // indirect
-	github.com/mitchellh/mapstructure v1.5.0 // indirect
-	github.com/mitchellh/reflectwalk v1.0.2 // indirect
-	github.com/nleof/goyesql v1.0.1 // indirect
-	github.com/robfig/cron/v3 v3.0.1 // indirect
-	github.com/spf13/cast v1.4.1 // indirect
-	golang.org/x/sys v0.0.0-20220422013727-9388b58f7150 // indirect
-	golang.org/x/time v0.0.0-20220411224347-583f2d630306 // indirect
-	google.golang.org/protobuf v1.28.0 // indirect
+	github.com/ethereum/go-ethereum v1.10.17
+	github.com/lmittmann/w3 v0.7.0
+	github.com/rs/zerolog v1.26.1
+)
+
+require (
+	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
+	github.com/btcsuite/btcd v0.20.1-beta // indirect
+	github.com/deckarep/golang-set v1.8.0 // indirect
+	github.com/go-ole/go-ole v1.2.1 // indirect
+	github.com/go-stack/stack v1.8.0 // indirect
+	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect
+	github.com/tklauser/go-sysconf v0.3.5 // indirect
+	github.com/tklauser/numcpus v0.2.2 // indirect
+	golang.org/x/crypto v0.0.0-20211215165025-cf75a172585e // indirect
+	golang.org/x/sys v0.0.0-20210816183151-1e6c022a8912 // indirect
+	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 )
