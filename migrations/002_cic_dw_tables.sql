@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS tokens (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     token_address VARCHAR(40) NOT NULL UNIQUE,
     token_decimals INT NOT NULL,
-    token_name VARCHAR(10) NOT NULL,
+    token_name VARCHAR(16) NOT NULL,
     token_symbol VARCHAR(10) NOT NULL
 );
 
@@ -30,7 +30,9 @@ CREATE TABLE IF NOT EXISTS users (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     phone_number VARCHAR(16) NOT NULL,
     blockchain_address VARCHAR(40) NOT NULL,
-    date_registered TIMESTAMP NOT NULL
+    date_registered TIMESTAMP NOT NULL,
+    failed_pin_attempts INT NOT NULL,
+    ussd_account_status INT NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS phone_number_idx ON users USING hash(phone_number);
@@ -51,14 +53,12 @@ CREATE TABLE IF NOT EXISTS meta (
     family_name VARCHAR(32),
     products TEXT [],
     location_name VARCHAR(32),
-    location_latitude FLOAT,
-    location_longitude FLOAT,
     tags TEXT[]
 );
 
-CREATE INDEX IF NOT EXISTS tags ON meta USING gin(tags gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS tags ON meta USING gin(tags);
 CREATE INDEX IF NOT EXISTS location_name_idx ON meta USING gin(location_name gin_trgm_ops);
-CREATE INDEX IF NOT EXISTS products_idx ON meta USING gin(location_name gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS products_idx ON meta USING gin(location_name);
 CREATE INDEX IF NOT EXISTS meta_filter_idx ON meta(gender, preferred_language, age);
 
 -- cursors table (for internal syncing)
@@ -69,13 +69,13 @@ CREATE TABLE IF NOT EXISTS cursors (
 );
 
 -- bootstrap first users row
-INSERT INTO users (phone_number, blockchain_address, date_registered)
-SELECT phone_number, blockchain_address, created
+INSERT INTO users (phone_number, blockchain_address, date_registered, failed_pin_attempts, ussd_account_status)
+SELECT phone_number, blockchain_address, created, failed_pin_attempts, status
 FROM cic_ussd.account WHERE id = 1;
 
 -- id 1 = cic_ussd cursor
-INSERT INTO cursors (id, cursor_pos)
-SELECT 1, blockchain_address FROM users ORDER BY id DESC LIMIT 1;
+INSERT INTO cursors (id, cursor_pos, cursor_description)
+SELECT 1, blockchain_address, 'cic_ussd.account.block_chain_address remote cursor' FROM users ORDER BY id DESC LIMIT 1;
 
 -- bootstrap first tx row
 INSERT INTO transactions (tx_hash, block_number, tx_index, token_address, sender_address, recipient_address, tx_value, date_block, tx_type)
@@ -86,13 +86,9 @@ INNER JOIN cic_cache.tag ON cic_cache.tag_tx_link.tag_id = cic_cache.tag.id
 WHERE tx.success = true AND tx.id = 1;
 
 -- id 2 = cic_cache cursor
-INSERT INTO cursors (id,cursor_pos)
-SELECT 2, tx_hash FROM transactions ORDER BY id DESC LIMIT 1;
+INSERT INTO cursors (id, cursor_pos, cursor_description)
+SELECT 2, tx_hash, 'cic_cache.tx.tx_hash remote cursor' FROM transactions ORDER BY id DESC LIMIT 1;
 
 -- id 3 = kitabu.erc20_token_index  cursor
-INSERT INTO cursors (cursor_pos) VALUES
+INSERT INTO cursors (id, cursor_pos, cursor_description) VALUES
 (3, 0, 'kitabu.erc20_token_index contract entry idx');
-
--- cursor descriptions
-UPDATE cursors SET cursor_description = 'cic_ussd.account.block_chain_address remote cursor' WHERE id = 1;
-UPDATE cursors SET cursor_description = 'cic_cache.tx.tx_hash remote cursor' WHERE id = 2;
