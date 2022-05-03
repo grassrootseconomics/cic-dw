@@ -13,6 +13,7 @@ import (
 	"strings"
 )
 
+// TODO: Load into koanf struct
 func loadConfig(configFilePath string, envOverridePrefix string, conf *koanf.Koanf) error {
 	// assumed to always be at the root folder
 	confFile := file.Provider(configFilePath)

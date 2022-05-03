@@ -1,7 +1,7 @@
 -- tx table
 CREATE TABLE IF NOT EXISTS transactions (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    tx_hash VARCHAR(64) NOT NULL,
+    tx_hash VARCHAR(64) NOT NULL UNIQUE,
     block_number INT NOT NULL,
     tx_index INT NOT NULL,
     token_address VARCHAR(40) NOT NULL,
@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS transactions (
     recipient_address VARCHAR(40) NOT NULL,
     tx_value BIGINT NOT NULL,
     tx_type VARCHAR(16) NOT NULL,
-    date_block TIMESTAMP NOT NULL
+    date_block TIMESTAMP NOT NULL,
+    success BOOLEAN NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS token_idx ON transactions USING hash(token_address);
@@ -28,8 +29,8 @@ CREATE TABLE IF NOT EXISTS tokens (
 -- users table
 CREATE TABLE IF NOT EXISTS users (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    phone_number VARCHAR(16) NOT NULL,
-    blockchain_address VARCHAR(40) NOT NULL,
+    phone_number VARCHAR(16) NOT NULL UNIQUE,
+    blockchain_address VARCHAR(40) NOT NULL UNIQUE,
     date_registered TIMESTAMP NOT NULL,
     failed_pin_attempts INT NOT NULL,
     ussd_account_status INT NOT NULL
@@ -78,12 +79,12 @@ INSERT INTO cursors (id, cursor_pos, cursor_description)
 SELECT 1, blockchain_address, 'cic_ussd.account.block_chain_address remote cursor' FROM users ORDER BY id DESC LIMIT 1;
 
 -- bootstrap first tx row
-INSERT INTO transactions (tx_hash, block_number, tx_index, token_address, sender_address, recipient_address, tx_value, date_block, tx_type)
-SELECT tx.tx_hash, tx.block_number, tx.tx_index, tx.source_token, tx.sender, tx.recipient, tx.from_value, tx.date_block, concat(tag.domain, '_', tag.value) AS tx_type
+INSERT INTO transactions (tx_hash, block_number, tx_index, token_address, sender_address, recipient_address, tx_value, date_block, tx_type, success)
+SELECT tx.tx_hash, tx.block_number, tx.tx_index, tx.source_token, tx.sender, tx.recipient, tx.from_value, tx.date_block, concat(tag.domain, '_', tag.value) AS tx_type, tx.success
 FROM cic_cache.tx
 INNER JOIN cic_cache.tag_tx_link ON tx.id = cic_cache.tag_tx_link.tx_id
 INNER JOIN cic_cache.tag ON cic_cache.tag_tx_link.tag_id = cic_cache.tag.id
-WHERE tx.success = true AND tx.id = 1;
+WHERE tx.id = 1;
 
 -- id 2 = cic_cache cursor
 INSERT INTO cursors (id, cursor_pos, cursor_description)
