@@ -8,6 +8,17 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=cic_dw
     volumes:
-      - ./dev-data/postgres:/var/lib/postgresql/data
+      - cic-dw-db:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+  redis:
+    image: redis:6-alpine
+    restart: unless-stopped
+    network_mode: "host"
+    command: redis-server --loglevel warning
+    ports:
+      - '6379:6379'
+
+volumes:
+  cic-dw-db:
+    driver: local

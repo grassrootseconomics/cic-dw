@@ -6,6 +6,7 @@ import (
 	"github.com/lmittmann/w3"
 	"github.com/lmittmann/w3/module/eth"
 	"math/big"
+	"strings"
 )
 
 func (c *CicNet) EntryCount(ctx context.Context) (big.Int, error) {
@@ -22,7 +23,7 @@ func (c *CicNet) EntryCount(ctx context.Context) (big.Int, error) {
 	return tokenCount, nil
 }
 
-func (c *CicNet) AddressAtIndex(ctx context.Context, index *big.Int) (common.Address, error) {
+func (c *CicNet) AddressAtIndex(ctx context.Context, index *big.Int) (string, error) {
 	var address common.Address
 
 	err := c.ethClient.CallCtx(
@@ -30,8 +31,9 @@ func (c *CicNet) AddressAtIndex(ctx context.Context, index *big.Int) (common.Add
 		eth.CallFunc(w3.MustNewFunc("entry(uint256 _idx)", "address"), c.tokenIndex, index).Returns(&address),
 	)
 	if err != nil {
-		return [20]byte{}, err
+		return "", err
 	}
 
-	return address, nil
+	// strip 0x at pkg level
+	return strings.Trim(address.String(), "0x"), nil
 }

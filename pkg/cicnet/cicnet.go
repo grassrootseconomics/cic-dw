@@ -10,16 +10,13 @@ type CicNet struct {
 	tokenIndex common.Address
 }
 
-func NewCicNet(rpcEndpoint string, tokenIndex common.Address) (*CicNet, error) {
-	ethClient, err := w3.Dial(rpcEndpoint)
-	if err != nil {
-		return &CicNet{}, err
-	}
+func NewCicNet(rpcEndpoint string, tokenIndex common.Address) *CicNet {
+	ethClient := w3.MustDial(rpcEndpoint)
 
 	return &CicNet{
 		ethClient:  ethClient,
 		tokenIndex: tokenIndex,
-	}, nil
+	}
 }
 
 func (c *CicNet) Close() error {
