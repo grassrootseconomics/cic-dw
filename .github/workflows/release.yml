@@ -26,10 +26,6 @@ jobs:
           registry: docker.grassecon.net
           username: ${{ secrets.GEDOCKER_USERNAME }}
           password: ${{ secrets.GEDOCKER_PASSWORD }}
-
-      - name: Prepare Dependencies
-        run: |
-          make dist
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
