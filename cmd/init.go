@@ -47,11 +47,15 @@ func loadConfig(configFilePath string, k *koanf.Koanf) error {
 	return nil
 }
 
-func connectDb(dsn string) error {
+func connectDbs(dsn string) error {
 	var err error
 	db, err = pgxpool.Connect(context.Background(), dsn)
 	if err != nil {
 		return err
+	}
+
+	rClient = asynq.RedisClientOpt{
+		Addr: conf.Db.Redis,
 	}
 
 	return nil

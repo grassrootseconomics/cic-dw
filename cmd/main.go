@@ -35,7 +35,7 @@ func init() {
 		log.Fatal().Err(err).Msg("failed to load sql file")
 	}
 
-	if err := connectDb(conf.Db.Postgres); err != nil {
+	if err := connectDbs(conf.Db.Postgres); err != nil {
 		log.Fatal().Err(err).Msg("failed to connect to postgres")
 	}
 

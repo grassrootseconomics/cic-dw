@@ -8,5 +8,5 @@ rpc   = "http://127.0.0.1:8545"
 
 [syncers]
 cache = "@every 20s"
-ussd  = "@every 1m"
-token = "@every 10s"
+ussd  = "@every 30"
+token = "@every 1m"
