@@ -47,18 +47,23 @@ func loadConfig(configFilePath string, k *koanf.Koanf) error {
 	return nil
 }
 
-func connectDbs(dsn string) error {
+func connectDb(dsn string) error {
 	var err error
 	db, err = pgxpool.Connect(context.Background(), dsn)
 	if err != nil {
 		return err
 	}
 
-	rClient = asynq.RedisClientOpt{
-		Addr: conf.Db.Redis,
+	return nil
+}
+
+func parseRedis(dsn string) (asynq.RedisConnOpt, error) {
+	rconn, err := asynq.ParseRedisURI(dsn)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	return rconn, nil
 }
 
 func connectCicNet(rpcProvider string, tokenIndex common.Address) error {
@@ -82,7 +87,7 @@ func loadQueries(sqlFile string) error {
 	return nil
 }
 
-func bootstrapScheduler(redis asynq.RedisClientOpt) (*asynq.Scheduler, error) {
+func bootstrapScheduler(redis asynq.RedisConnOpt) (*asynq.Scheduler, error) {
 	scheduler := asynq.NewScheduler(redis, nil)
 
 	for k, v := range conf.Syncers {
@@ -99,7 +104,7 @@ func bootstrapScheduler(redis asynq.RedisClientOpt) (*asynq.Scheduler, error) {
 	return scheduler, nil
 }
 
-func bootstrapProcessor(redis asynq.RedisClientOpt) (*asynq.Server, *asynq.ServeMux) {
+func bootstrapProcessor(redis asynq.RedisConnOpt) (*asynq.Server, *asynq.ServeMux) {
 	processorServer := asynq.NewServer(
 		redis,
 		asynq.Config{

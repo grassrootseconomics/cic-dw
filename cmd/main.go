@@ -2,7 +2,6 @@ package main
 
 import (
 	"cic-dw/pkg/cicnet"
-	"github.com/hibiken/asynq"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/knadh/koanf"
 	"github.com/lmittmann/w3"
@@ -17,7 +16,6 @@ import (
 var (
 	k = koanf.New(".")
 
-	rClient      asynq.RedisClientOpt
 	queries      goyesql.Queries
 	conf         config
 	db           *pgxpool.Pool
@@ -35,7 +33,7 @@ func init() {
 		log.Fatal().Err(err).Msg("failed to load sql file")
 	}
 
-	if err := connectDbs(conf.Db.Postgres); err != nil {
+	if err := connectDb(conf.Db.Postgres); err != nil {
 		log.Fatal().Err(err).Msg("failed to connect to postgres")
 	}
 
@@ -46,6 +44,11 @@ func init() {
 }
 
 func main() {
+	rClient, err := parseRedis(conf.Db.Redis)
+	if err != nil {
+		log.Fatal().Err(err).Msg("could not parse redis connection string")
+	}
+
 	scheduler, err := bootstrapScheduler(rClient)
 	if err != nil {
 		log.Fatal().Err(err).Msg("could not bootstrap scheduler")
