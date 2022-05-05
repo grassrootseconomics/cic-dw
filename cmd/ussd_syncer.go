@@ -7,24 +7,14 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type ussdSyncer struct {
-	app *App
-}
-
-func newUssdSyncer(app *App) *ussdSyncer {
-	return &ussdSyncer{
-		app: app,
-	}
-}
-
-func (s *ussdSyncer) ProcessTask(ctx context.Context, t *asynq.Task) error {
-	_, err := s.app.db.Exec(ctx, s.app.queries["ussd-syncer"])
+func ussdSyncer(ctx context.Context, t *asynq.Task) error {
+	_, err := db.Exec(ctx, queries["ussd-syncer"])
 	if err != nil {
 		return asynq.SkipRetry
 	}
 
 	var count tableCount
-	if err := pgxscan.Get(ctx, s.app.db, &count, "SELECT COUNT(*) from users"); err != nil {
+	if err := pgxscan.Get(ctx, db, &count, "SELECT COUNT(*) from users"); err != nil {
 		return asynq.SkipRetry
 	}
 

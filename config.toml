@@ -1,19 +1,12 @@
 [db]
-dsn = "postgresql://postgres:postgres@127.0.0.1:5432/cic_dw"
-
-[redis]
-dsn = "127.0.0.1:6379"
+postgres = "postgresql://postgres:postgres@127.0.0.1:5432/cic_dw"
+redis    = "127.0.0.1:6379"
 
 [chain]
-rpc = "http://127.0.0.1:8545"
-registry = "0x5A1EB529438D8b3cA943A45a48744f4c73d1f098"
+index = "0x5A1EB529438D8b3cA943A45a48744f4c73d1f098"
+rpc   = "http://127.0.0.1:8545"
 
-# syncers
-[ussd]
-schedule = "@every 15s"
-
-[cache]
-schedule = "@every 15s"
-
-[token]
-schedule = "@every 15s"
+[syncers]
+cache = "@every 20s"
+ussd  = "@every 1m"
+token = "@every 10s"

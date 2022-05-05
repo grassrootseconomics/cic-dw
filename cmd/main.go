@@ -9,56 +9,73 @@ import (
 	"github.com/nleof/goyesql"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"golang.org/x/sys/unix"
 	"os"
-	"sync"
-)
-
-type App struct {
-	db           *pgxpool.Pool
-	queries      goyesql.Queries
-	rClient      asynq.RedisClientOpt
-	cicnetClient *cicnet.CicNet
-	sigChan      chan os.Signal
-}
-
-const (
-	confEnvOverridePrefix = ""
+	"os/signal"
 )
 
 var (
-	conf         = koanf.New(".")
-	db           *pgxpool.Pool
+	k = koanf.New(".")
+
+	rClient      asynq.RedisClientOpt
 	queries      goyesql.Queries
-	redisConn    asynq.RedisClientOpt
+	conf         config
+	db           *pgxpool.Pool
 	cicnetClient *cicnet.CicNet
 )
 
 func init() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
-	if err := loadConfig("config.toml", confEnvOverridePrefix, conf); err != nil {
+	if err := loadConfig("config.toml", k); err != nil {
 		log.Fatal().Err(err).Msg("failed to load config")
 	}
 
-	db = connectDb(conf.String("db.dsn"))
-	queries = loadQueries("queries.sql")
-	redisConn = connectQueue(conf.String("redis.dsn"))
-	cicnetClient = cicnet.NewCicNet(conf.String("chain.rpc"), w3.A(conf.String("chain.registry")))
+	if err := loadQueries("queries.sql"); err != nil {
+		log.Fatal().Err(err).Msg("failed to load sql file")
+	}
+
+	if err := connectDb(conf.Db.Postgres); err != nil {
+		log.Fatal().Err(err).Msg("failed to connect to postgres")
+	}
+
+	// TODO: Not core, should be handled by job processor
+	if err := connectCicNet(conf.Chain.RpcProvider, w3.A(conf.Chain.TokenRegistry)); err != nil {
+		log.Fatal().Err(err).Msg("failed to connect to postgres")
+	}
 }
 
 func main() {
-	// TODO: Graceful shutdown of go routines (handle SIG INT/TERM)
-	var wg sync.WaitGroup
-
-	app := &App{
-		db:           db,
-		queries:      queries,
-		rClient:      redisConn,
-		cicnetClient: cicnetClient,
+	scheduler, err := bootstrapScheduler(rClient)
+	if err != nil {
+		log.Fatal().Err(err).Msg("could not bootstrap scheduler")
 	}
 
-	wg.Add(2)
-	go runScheduler(app)
-	go runProcessor(app)
-	wg.Wait()
+	go func() {
+		if err := scheduler.Run(); err != nil {
+			log.Fatal().Err(err).Msg("could not start scheduler")
+		}
+	}()
+
+	processor, mux := bootstrapProcessor(rClient)
+	go func() {
+		if err := processor.Run(mux); err != nil {
+			log.Fatal().Err(err).Msg("failed to start job processor")
+		}
+	}()
+
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, unix.SIGTERM, unix.SIGINT, unix.SIGTSTP)
+	for {
+		s := <-sigs
+		if s == unix.SIGTSTP {
+			processor.Stop()
+			scheduler.Shutdown()
+			continue
+		}
+		break
+	}
+
+	processor.Shutdown()
+	log.Info().Msg("gracefully shutdown processor and scheduler")
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/georgysavva/scany/pgxscan"
 	"github.com/hibiken/asynq"
 	"github.com/jackc/pgx/v4"
@@ -12,27 +11,17 @@ import (
 	"strconv"
 )
 
-type tokenSyncer struct {
-	app *App
-}
-
 type tokenCursor struct {
 	CursorPos string `db:"cursor_pos"`
 }
 
-func newTokenSyncer(app *App) *tokenSyncer {
-	return &tokenSyncer{
-		app: app,
-	}
-}
-
-func (s *tokenSyncer) ProcessTask(ctx context.Context, t *asynq.Task) error {
+func tokenSyncer(ctx context.Context, t *asynq.Task) error {
 	var lastCursor tokenCursor
 
-	if err := pgxscan.Get(ctx, s.app.db, &lastCursor, s.app.queries["cursor-pos"], 3); err != nil {
+	if err := pgxscan.Get(ctx, db, &lastCursor, queries["cursor-pos"], 3); err != nil {
 		return err
 	}
-	latestChainIdx, err := s.app.cicnetClient.EntryCount(ctx)
+	latestChainIdx, err := cicnetClient.EntryCount(ctx)
 	if err != nil {
 		return err
 	}
@@ -48,20 +37,19 @@ func (s *tokenSyncer) ProcessTask(ctx context.Context, t *asynq.Task) error {
 		batch := &pgx.Batch{}
 
 		for i := lastCursorPos; i <= latestChainPos; i++ {
-			nextTokenAddress, err := s.app.cicnetClient.AddressAtIndex(ctx, big.NewInt(i))
+			nextTokenAddress, err := cicnetClient.AddressAtIndex(ctx, big.NewInt(i))
+			if err != nil {
+				return err
+			}
+			tokenInfo, err := cicnetClient.TokenInfo(ctx, w3.A(nextTokenAddress))
 			if err != nil {
 				return err
 			}
 
-			tokenInfo, err := s.app.cicnetClient.TokenInfo(ctx, w3.A(fmt.Sprintf("0x%s", nextTokenAddress)))
-			if err != nil {
-				return err
-			}
-
-			batch.Queue(s.app.queries["insert-token-data"], nextTokenAddress, tokenInfo.Name, tokenInfo.Symbol, tokenInfo.Decimals.Int64())
+			batch.Queue(queries["insert-token-data"], nextTokenAddress[2:], tokenInfo.Name, tokenInfo.Symbol, tokenInfo.Decimals.Int64())
 		}
 
-		res := s.app.db.SendBatch(ctx, batch)
+		res := db.SendBatch(ctx, batch)
 		for i := 0; i < batch.Len(); i++ {
 			_, err := res.Exec()
 			if err != nil {
@@ -73,7 +61,7 @@ func (s *tokenSyncer) ProcessTask(ctx context.Context, t *asynq.Task) error {
 			return err
 		}
 
-		_, err = s.app.db.Exec(ctx, s.app.queries["update-cursor"], strconv.FormatInt(latestChainIdx.Int64(), 10), 3)
+		_, err = db.Exec(ctx, queries["update-cursor"], strconv.FormatInt(latestChainIdx.Int64(), 10), 3)
 		if err != nil {
 			return err
 		}

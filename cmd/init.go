@@ -1,7 +1,9 @@
 package main
 
 import (
+	"cic-dw/pkg/cicnet"
 	"context"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/hibiken/asynq"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/knadh/koanf"
@@ -13,44 +15,98 @@ import (
 	"strings"
 )
 
-// TODO: Load into koanf struct
-func loadConfig(configFilePath string, envOverridePrefix string, conf *koanf.Koanf) error {
-	// assumed to always be at the root folder
+type config struct {
+	Db struct {
+		Postgres string `koanf:"postgres"`
+		Redis    string `koanf:"redis"`
+	}
+	Chain struct {
+		RpcProvider   string `koanf:"rpc"`
+		TokenRegistry string `koanf:"index"`
+	}
+	Syncers map[string]string `koanf:"syncers"`
+}
+
+func loadConfig(configFilePath string, k *koanf.Koanf) error {
 	confFile := file.Provider(configFilePath)
-	if err := conf.Load(confFile, toml.Parser()); err != nil {
+	if err := k.Load(confFile, toml.Parser()); err != nil {
 		return err
 	}
-	// override with env variables
-	if err := conf.Load(env.Provider(envOverridePrefix, ".", func(s string) string {
+	if err := k.Load(env.Provider("", ".", func(s string) string {
 		return strings.ReplaceAll(strings.ToLower(
-			strings.TrimPrefix(s, envOverridePrefix)), "_", ".")
+			strings.TrimPrefix(s, "")), "_", ".")
 	}), nil); err != nil {
+		return err
+	}
+
+	err := k.UnmarshalWithConf("", &conf, koanf.UnmarshalConf{Tag: "koanf"})
+	if err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func connectDb(dsn string) *pgxpool.Pool {
-	conn, err := pgxpool.Connect(context.Background(), dsn)
+func connectDb(dsn string) error {
+	var err error
+	db, err = pgxpool.Connect(context.Background(), dsn)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to connect to db")
+		return err
 	}
 
-	return conn
+	return nil
 }
 
-func loadQueries(sqlFile string) goyesql.Queries {
-	q, err := goyesql.ParseFile(sqlFile)
+func connectCicNet(rpcProvider string, tokenIndex common.Address) error {
+	var err error
+
+	cicnetClient, err = cicnet.NewCicNet(rpcProvider, tokenIndex)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to parse sql queries")
+		return err
 	}
 
-	return q
+	return nil
 }
 
-func connectQueue(dsn string) asynq.RedisClientOpt {
-	rClient := asynq.RedisClientOpt{Addr: dsn}
+func loadQueries(sqlFile string) error {
+	var err error
+	queries, err = goyesql.ParseFile(sqlFile)
+	if err != nil {
+		return err
+	}
 
-	return rClient
+	return nil
+}
+
+func bootstrapScheduler(redis asynq.RedisClientOpt) (*asynq.Scheduler, error) {
+	scheduler := asynq.NewScheduler(redis, nil)
+
+	for k, v := range conf.Syncers {
+		task := asynq.NewTask(k, nil)
+
+		_, err := scheduler.Register(v, task)
+		if err != nil {
+			return nil, err
+		}
+
+		log.Info().Msgf("successfully registered %s syncer", k)
+	}
+
+	return scheduler, nil
+}
+
+func bootstrapProcessor(redis asynq.RedisClientOpt) (*asynq.Server, *asynq.ServeMux) {
+	processorServer := asynq.NewServer(
+		redis,
+		asynq.Config{
+			Concurrency: 5,
+		},
+	)
+
+	mux := asynq.NewServeMux()
+	mux.HandleFunc("token", tokenSyncer)
+	mux.HandleFunc("cache", cacheSyncer)
+	mux.HandleFunc("ussd", ussdSyncer)
+
+	return processorServer, mux
 }
