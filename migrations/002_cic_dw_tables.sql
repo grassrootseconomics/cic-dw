@@ -80,7 +80,7 @@ SELECT 1, blockchain_address, 'cic_ussd.account.block_chain_address remote curso
 
 -- bootstrap first tx row
 INSERT INTO transactions (tx_hash, block_number, tx_index, token_address, sender_address, recipient_address, tx_value, date_block, tx_type, success)
-SELECT tx.tx_hash, tx.block_number, tx.tx_index, tx.source_token, tx.sender, tx.recipient, tx.from_value, tx.date_block, concat(tag.domain, '_', tag.value) AS tx_type, tx.success
+SELECT tx.tx_hash, tx.block_number, tx.tx_index, LOWER(tx.source_token), LOWER(tx.sender), LOWER(tx.recipient), tx.from_value, tx.date_block, concat(tag.domain, '_', tag.value) AS tx_type, tx.success
 FROM cic_cache.tx
 INNER JOIN cic_cache.tag_tx_link ON tx.id = cic_cache.tag_tx_link.tx_id
 INNER JOIN cic_cache.tag ON cic_cache.tag_tx_link.tag_id = cic_cache.tag.id
