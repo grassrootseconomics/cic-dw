@@ -23,6 +23,7 @@ jobs:
       - name: Login to Docker Registry
         uses: docker/login-action@v1
         with:
+	  registry: docker.grassecon.net
           username: ${{ secrets.GEDOCKER_USERNAME }}
           password: ${{ secrets.GEDOCKER_PASSWORD }}
 
