@@ -1,0 +1,31 @@
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+    main: ./cmd
+    ldflags:
+      - -s -w
+
+archives:
+  - format: tar.gz
+    files:
+      - LICENSE
+      - config.toml
+      - queries.sql
+      - migrations/*
+
+dockers:
+  - goos: linux
+    goarch: amd64
+    ids:
+    - cic-dw
+    image_templates:
+    - "docker.grassecon.net/cic-dw/cic-dw:latest"
+    - "docker.grassecon.net/cic-dw/cic-dw:{{ .Tag }}"
+    dockerfile: Dockerfile
+    extra_files:
+    - config.toml
+    - queries.sql
