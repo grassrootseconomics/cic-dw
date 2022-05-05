@@ -6,7 +6,6 @@ import (
 	"github.com/lmittmann/w3"
 	"github.com/lmittmann/w3/module/eth"
 	"math/big"
-	"strings"
 )
 
 func (c *CicNet) EntryCount(ctx context.Context) (big.Int, error) {
@@ -34,6 +33,5 @@ func (c *CicNet) AddressAtIndex(ctx context.Context, index *big.Int) (string, er
 		return "", err
 	}
 
-	// strip 0x at pkg level
-	return strings.Trim(address.String(), "0x"), nil
+	return address.String(), nil
 }
