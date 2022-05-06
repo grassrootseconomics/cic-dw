@@ -1,9 +1,9 @@
 package main
 
 import (
-	"cic-dw/pkg/cicnet"
 	"context"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/grassrootseconomics/cic_go/cic_net"
 	"github.com/hibiken/asynq"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/knadh/koanf"
@@ -69,7 +69,7 @@ func parseRedis(dsn string) (asynq.RedisConnOpt, error) {
 func connectCicNet(rpcProvider string, tokenIndex common.Address) error {
 	var err error
 
-	cicnetClient, err = cicnet.NewCicNet(rpcProvider, tokenIndex)
+	cicnetClient, err = cic_net.NewCicNet(rpcProvider, tokenIndex)
 	if err != nil {
 		return err
 	}

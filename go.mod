@@ -5,19 +5,19 @@ go 1.18
 require (
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/georgysavva/scany v0.3.0
+	github.com/grassrootseconomics/cic_go v0.1.0
 	github.com/hibiken/asynq v0.23.0
 	github.com/jackc/pgx/v4 v4.16.0
 	github.com/knadh/koanf v1.4.1
 	github.com/lmittmann/w3 v0.7.0
 	github.com/nleof/goyesql v1.0.1
 	github.com/rs/zerolog v1.26.1
-	golang.org/x/sys v0.0.0-20220502124256-b6088ccd6cba
+	golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6
 )
 
 require (
 	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.1.2 // indirect
-	github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect

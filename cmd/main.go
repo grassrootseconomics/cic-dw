@@ -1,7 +1,7 @@
 package main
 
 import (
-	"cic-dw/pkg/cicnet"
+	"github.com/grassrootseconomics/cic_go/cic_net"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/knadh/koanf"
 	"github.com/lmittmann/w3"
@@ -19,7 +19,7 @@ var (
 	queries      goyesql.Queries
 	conf         config
 	db           *pgxpool.Pool
-	cicnetClient *cicnet.CicNet
+	cicnetClient *cic_net.CicNet
 )
 
 func init() {
@@ -37,7 +37,6 @@ func init() {
 		log.Fatal().Err(err).Msg("failed to connect to postgres")
 	}
 
-	// TODO: Not core, should be handled by job processor
 	if err := connectCicNet(conf.Chain.RpcProvider, w3.A(conf.Chain.TokenRegistry)); err != nil {
 		log.Fatal().Err(err).Msg("failed to connect to postgres")
 	}
