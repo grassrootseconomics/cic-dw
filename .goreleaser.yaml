@@ -14,7 +14,7 @@ archives:
     files:
       - LICENSE
       - config.toml
-      - queries.sql
+      - queries/*
       - migrations/*
 
 dockers:
@@ -28,4 +28,4 @@ dockers:
     dockerfile: Dockerfile
     extra_files:
     - config.toml
-    - queries.sql
+    - queries
