@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	cic_net "github.com/grassrootseconomics/cic-go/net"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/knadh/koanf"
@@ -10,6 +11,8 @@ import (
 	"golang.org/x/sys/unix"
 	"os"
 	"os/signal"
+	"strings"
+	"time"
 )
 
 var (
@@ -65,6 +68,17 @@ func main() {
 		}
 	}()
 
+	server := initHTTPServer()
+	go func() {
+		if err := server.Start(conf.Server.Address); err != nil {
+			if strings.Contains(err.Error(), "Server closed") {
+				log.Info().Msg("shutting down server")
+			} else {
+				log.Fatal().Err(err).Msg("could not start server")
+			}
+		}
+	}()
+
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, unix.SIGTERM, unix.SIGINT, unix.SIGTSTP)
 	for {
@@ -78,5 +92,11 @@ func main() {
 	}
 
 	processor.Shutdown()
-	log.Info().Msg("gracefully shutdown processor and scheduler")
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+	err = server.Shutdown(ctx)
+	if err != nil {
+		log.Fatal().Err(err).Msg("could not shut down server")
+	}
+	log.Info().Msg("gracefully shutdown processor, scheduler and server")
 }
