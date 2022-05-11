@@ -8,6 +8,6 @@ WORKDIR /cic-dw
 
 COPY cic-dw .
 COPY config.toml .
-COPY queries.sql .
+COPY queries .
 
 CMD ["./cic-dw"]
