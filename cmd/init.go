@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/grassrootseconomics/cic_go/cic_net"
+	cic_net "github.com/grassrootseconomics/cic-go/net"
 	"github.com/hibiken/asynq"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/knadh/koanf"
@@ -11,7 +12,6 @@ import (
 	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/nleof/goyesql"
-	"github.com/rs/zerolog/log"
 	"strings"
 )
 
@@ -25,6 +25,11 @@ type config struct {
 		TokenRegistry string `koanf:"index"`
 	}
 	Syncers map[string]string `koanf:"syncers"`
+}
+
+type queries struct {
+	core      goyesql.Queries
+	dashboard goyesql.Queries
 }
 
 func loadConfig(configFilePath string, k *koanf.Koanf) error {
@@ -77,45 +82,21 @@ func connectCicNet(rpcProvider string, tokenIndex common.Address) error {
 	return nil
 }
 
-func loadQueries(sqlFile string) error {
-	var err error
-	queries, err = goyesql.ParseFile(sqlFile)
+func loadQueries(sqlFilesPath string) error {
+	coreQueries, err := goyesql.ParseFile(fmt.Sprintf("%s/core.sql", sqlFilesPath))
 	if err != nil {
 		return err
 	}
 
-	return nil
-}
-
-func bootstrapScheduler(redis asynq.RedisConnOpt) (*asynq.Scheduler, error) {
-	scheduler := asynq.NewScheduler(redis, nil)
-
-	for k, v := range conf.Syncers {
-		task := asynq.NewTask(k, nil)
-
-		_, err := scheduler.Register(v, task)
-		if err != nil {
-			return nil, err
-		}
-
-		log.Info().Msgf("successfully registered %s syncer", k)
+	dashboardQueries, err := goyesql.ParseFile(fmt.Sprintf("%s/dashboard.sql", sqlFilesPath))
+	if err != nil {
+		return err
 	}
 
-	return scheduler, nil
-}
+	preparedQueries = &queries{
+		core:      coreQueries,
+		dashboard: dashboardQueries,
+	}
 
-func bootstrapProcessor(redis asynq.RedisConnOpt) (*asynq.Server, *asynq.ServeMux) {
-	processorServer := asynq.NewServer(
-		redis,
-		asynq.Config{
-			Concurrency: 5,
-		},
-	)
-
-	mux := asynq.NewServeMux()
-	mux.HandleFunc("token", tokenSyncer)
-	mux.HandleFunc("cache", cacheSyncer)
-	mux.HandleFunc("ussd", ussdSyncer)
-
-	return processorServer, mux
+	return nil
 }
