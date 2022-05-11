@@ -20,6 +20,9 @@ type config struct {
 		Postgres string `koanf:"postgres"`
 		Redis    string `koanf:"redis"`
 	}
+	Server struct {
+		Address string `koanf:"address"`
+	}
 	Chain struct {
 		RpcProvider   string `koanf:"rpc"`
 		TokenRegistry string `koanf:"index"`

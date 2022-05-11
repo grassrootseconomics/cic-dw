@@ -2,6 +2,9 @@
 postgres = "postgresql://postgres:postgres@127.0.0.1:5432/cic_dw"
 redis    = "redis://127.0.0.1:6379/0"
 
+[server]
+address = ":3000"
+
 [chain]
 index = "0x5A1EB529438D8b3cA943A45a48744f4c73d1f098"
 rpc   = "http://127.0.0.1:8545"
