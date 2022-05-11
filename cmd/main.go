@@ -1,11 +1,10 @@
 package main
 
 import (
-	"github.com/grassrootseconomics/cic_go/cic_net"
+	cic_net "github.com/grassrootseconomics/cic-go/net"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/knadh/koanf"
 	"github.com/lmittmann/w3"
-	"github.com/nleof/goyesql"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/sys/unix"
@@ -16,10 +15,10 @@ import (
 var (
 	k = koanf.New(".")
 
-	queries      goyesql.Queries
-	conf         config
-	db           *pgxpool.Pool
-	cicnetClient *cic_net.CicNet
+	preparedQueries *queries
+	conf            config
+	db              *pgxpool.Pool
+	cicnetClient    *cic_net.CicNet
 )
 
 func init() {
@@ -29,7 +28,7 @@ func init() {
 		log.Fatal().Err(err).Msg("failed to load config")
 	}
 
-	if err := loadQueries("queries.sql"); err != nil {
+	if err := loadQueries("queries"); err != nil {
 		log.Fatal().Err(err).Msg("failed to load sql file")
 	}
 
