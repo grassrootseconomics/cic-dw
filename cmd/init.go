@@ -21,7 +21,8 @@ type config struct {
 		Redis    string `koanf:"redis"`
 	}
 	Server struct {
-		Address string `koanf:"address"`
+		Address string   `koanf:"address"`
+		Cors    []string `koanf:"cors"`
 	}
 	Chain struct {
 		RpcProvider   string `koanf:"rpc"`

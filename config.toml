@@ -4,6 +4,12 @@ redis    = "redis://127.0.0.1:6379/0"
 
 [server]
 address = ":3000"
+cors = [
+    "https://dashboard.sarafu.network",
+    "https://dashboard.grassecon.org",
+    "https://dashboard.grassrootseconomics.org",
+    "http://localhost:3000"
+]
 
 [chain]
 index = "0x5A1EB529438D8b3cA943A45a48744f4c73d1f098"
