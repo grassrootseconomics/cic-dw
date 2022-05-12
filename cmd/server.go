@@ -3,14 +3,19 @@ package main
 import (
 	"cic-dw/internal/dashboard"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func initHTTPServer() *echo.Echo {
 	server := echo.New()
 	server.HideBanner = true
-
 	// TODO: Remove after stable release
 	server.Debug = true
+	server.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     conf.Server.Cors,
+		AllowCredentials: true,
+		MaxAge:           600,
+	}))
 
 	dashboard.InitDashboardApi(server, db, preparedQueries.dashboard)
 
