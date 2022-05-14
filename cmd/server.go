@@ -2,6 +2,7 @@ package main
 
 import (
 	"cic-dw/internal/dashboard"
+	"cic-dw/internal/public"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -18,6 +19,7 @@ func initHTTPServer() *echo.Echo {
 	}))
 
 	dashboard.InitDashboardApi(server, db, preparedQueries.dashboard)
+	public.InitPublicApi(server, db, preparedQueries.public)
 
 	return server
 }
