@@ -47,15 +47,15 @@ func init() {
 	}
 
 	if err := loadProvider(conf.Chain.RpcProvider); err != nil {
-		log.Fatal().Err(err).Msg("failed to connect to postgres")
+		log.Fatal().Err(err).Msg("failed to connect to rpc endpoint")
 	}
 
 	if err := loadCicNet(w3.A(conf.Chain.TokenRegistry)); err != nil {
-		log.Fatal().Err(err).Msg("failed to connect to postgres")
+		log.Fatal().Err(err).Msg("failed to load cicnet")
 	}
 
 	if err := loadBatchBalance(w3.A(conf.Chain.BalanceResolver)); err != nil {
-		log.Fatal().Err(err).Msg("failed to connect to postgres")
+		log.Fatal().Err(err).Msg("failed to load balance resolver")
 	}
 
 	if err := parseRedis(conf.Db.Redis); err != nil {
