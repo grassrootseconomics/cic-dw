@@ -2,17 +2,21 @@ package main
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"strings"
+	"time"
+
+	batch_balance "github.com/grassrootseconomics/cic-go/batch_balance"
 	cic_net "github.com/grassrootseconomics/cic-go/net"
+	"github.com/grassrootseconomics/cic-go/provider"
+	"github.com/hibiken/asynq"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/knadh/koanf"
 	"github.com/lmittmann/w3"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/sys/unix"
-	"os"
-	"os/signal"
-	"strings"
-	"time"
 )
 
 var (
@@ -21,7 +25,10 @@ var (
 	preparedQueries *queries
 	conf            config
 	db              *pgxpool.Pool
+	rpcProvider     *provider.Provider
 	cicnetClient    *cic_net.CicNet
+	batchBalance    *batch_balance.BatchBalance
+	rClient         asynq.RedisConnOpt
 )
 
 func init() {
@@ -39,17 +46,25 @@ func init() {
 		log.Fatal().Err(err).Msg("failed to connect to postgres")
 	}
 
-	if err := connectCicNet(conf.Chain.RpcProvider, w3.A(conf.Chain.TokenRegistry)); err != nil {
-		log.Fatal().Err(err).Msg("failed to connect to postgres")
+	if err := loadProvider(conf.Chain.RpcProvider); err != nil {
+		log.Fatal().Err(err).Msg("failed to connect to rpc endpoint")
+	}
+
+	if err := loadCicNet(w3.A(conf.Chain.TokenRegistry)); err != nil {
+		log.Fatal().Err(err).Msg("failed to load cicnet")
+	}
+
+	if err := loadBatchBalance(w3.A(conf.Chain.BalanceResolver)); err != nil {
+		log.Fatal().Err(err).Msg("failed to load balance resolver")
+	}
+
+	if err := parseRedis(conf.Db.Redis); err != nil {
+
+		log.Fatal().Err(err).Msg("could not parse redis connection string")
 	}
 }
 
 func main() {
-	rClient, err := parseRedis(conf.Db.Redis)
-	if err != nil {
-		log.Fatal().Err(err).Msg("could not parse redis connection string")
-	}
-
 	scheduler, err := bootstrapScheduler(rClient)
 	if err != nil {
 		log.Fatal().Err(err).Msg("could not bootstrap scheduler")
