@@ -13,7 +13,7 @@ cors = [
 
 [chain]
 index = "0x5A1EB529438D8b3cA943A45a48744f4c73d1f098"
-balances_resolver = "0x9C48FF0888A747Ba0108E7205Cae2EeB0C76c948"
+balances_resolver = "0xb9e215B789e9Ec6643Ba4ff7b98EA219F38c6fE5"
 rpc   = "http://127.0.0.1:8545"
 
 [syncers]

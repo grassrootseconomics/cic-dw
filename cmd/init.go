@@ -3,8 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/ethereum/go-ethereum/common"
+	"strings"
+
+	batch_balance "github.com/grassrootseconomics/cic-go/batch_balance"
 	cic_net "github.com/grassrootseconomics/cic-go/net"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/grassrootseconomics/cic-go/provider"
 	"github.com/hibiken/asynq"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/knadh/koanf"
@@ -12,7 +17,6 @@ import (
 	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/nleof/goyesql"
-	"strings"
 )
 
 type config struct {
@@ -25,8 +29,9 @@ type config struct {
 		Cors    []string `koanf:"cors"`
 	}
 	Chain struct {
-		RpcProvider   string `koanf:"rpc"`
-		TokenRegistry string `koanf:"index"`
+		RpcProvider     string `koanf:"rpc"`
+		TokenRegistry   string `koanf:"index"`
+		BalanceResolver string `koanf:"balances_resolver"`
 	}
 	Syncers map[string]string `koanf:"syncers"`
 }
@@ -67,19 +72,42 @@ func connectDb(dsn string) error {
 	return nil
 }
 
-func parseRedis(dsn string) (asynq.RedisConnOpt, error) {
-	rconn, err := asynq.ParseRedisURI(dsn)
+func parseRedis(dsn string) error {
+	var err error
+	rClient, err = asynq.ParseRedisURI(dsn)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return rconn, nil
+	return nil
 }
 
-func connectCicNet(rpcProvider string, tokenIndex common.Address) error {
+func loadProvider(rpcEndpoint string) error {
+	var err error
+
+	rpcProvider, err = provider.NewRpcProvider(rpcEndpoint)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func loadCicNet(tokenIndex common.Address) error {
 	var err error
 
 	cicnetClient, err = cic_net.NewCicNet(rpcProvider, tokenIndex)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func loadBatchBalance(balanceResolver common.Address) error {
+	var err error
+
+	batchBalance, err = batch_balance.NewBatchBalance(rpcProvider, balanceResolver)
 	if err != nil {
 		return err
 	}

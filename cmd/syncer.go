@@ -2,6 +2,7 @@ package main
 
 import (
 	"cic-dw/internal/syncer"
+
 	"github.com/hibiken/asynq"
 	"github.com/rs/zerolog/log"
 )
