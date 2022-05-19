@@ -70,29 +70,35 @@ func main() {
 		log.Fatal().Err(err).Msg("could not bootstrap scheduler")
 	}
 
-	go func() {
-		if err := scheduler.Run(); err != nil {
-			log.Fatal().Err(err).Msg("could not start scheduler")
-		}
-	}()
-
 	processor, mux := bootstrapProcessor(rClient)
-	go func() {
-		if err := processor.Run(mux); err != nil {
-			log.Fatal().Err(err).Msg("failed to start job processor")
-		}
-	}()
+
+	if conf.Syncer.Enabled {
+		go func() {
+			if err := scheduler.Run(); err != nil {
+				log.Fatal().Err(err).Msg("could not start scheduler")
+			}
+		}()
+
+		go func() {
+			if err := processor.Run(mux); err != nil {
+				log.Fatal().Err(err).Msg("failed to start job processor")
+			}
+		}()
+	}
 
 	server := initHTTPServer()
-	go func() {
-		if err := server.Start(conf.Server.Address); err != nil {
-			if strings.Contains(err.Error(), "Server closed") {
-				log.Info().Msg("shutting down server")
-			} else {
-				log.Fatal().Err(err).Msg("could not start server")
+
+	if conf.Api.Enabled {
+		go func() {
+			if err := server.Start(conf.Server.Address); err != nil {
+				if strings.Contains(err.Error(), "Server closed") {
+					log.Info().Msg("shutting down server")
+				} else {
+					log.Fatal().Err(err).Msg("could not start server")
+				}
 			}
-		}
-	}()
+		}()
+	}
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, unix.SIGTERM, unix.SIGINT, unix.SIGTSTP)
