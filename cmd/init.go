@@ -33,6 +33,12 @@ type config struct {
 		TokenRegistry   string `koanf:"index"`
 		BalanceResolver string `koanf:"balances_resolver"`
 	}
+	Syncer struct {
+		Enabled bool `koanf:"enabled"`
+	}
+	Api struct {
+		Enabled bool `koan:"enabled"`
+	}
 	Syncers map[string]string `koanf:"syncers"`
 }
 

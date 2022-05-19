@@ -27,5 +27,9 @@ func InitPublicApi(e *echo.Echo, db *pgxpool.Pool, batchBalance *batch_balance.B
 		}
 	})
 
+	// TODO: paginate schema validation
+
 	g.GET("/balances/:address", handleBalancesQuery)
+	g.GET("/tokens-count", handleTokensCountQuery)
+	g.GET("/tokens", handleTokenListQuery)
 }
