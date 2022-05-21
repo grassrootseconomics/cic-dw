@@ -5,7 +5,7 @@ INNER JOIN tokens on transactions.token_address = tokens.token_address
 WHERE transactions.sender_address = $1
 OR transactions.recipient_address = $1;
 
--- Bidirectional cursor pagianators
+-- Bidirectional cursor paginators
 -- name: list-tokens-fwd
 SELECT tokens.id, tokens.token_address, tokens.token_name, tokens.token_symbol FROM tokens
 WHERE tokens.id > $1 ORDER BY tokens.id ASC LIMIT $2;

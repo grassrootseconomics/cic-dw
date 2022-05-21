@@ -17,12 +17,15 @@ LIMIT 730;
 -- Produces x, y results for displaying on a line chart
 WITH date_range AS (
     SELECT day::date FROM generate_series($1, $2, INTERVAL '1 day') day
+),
+exclude AS (
+    SELECT sys_address FROM sys_accounts WHERE sys_address IS NOT NULL
 )
 
 SELECT date_range.day AS x, COUNT(transactions.id) AS y
 FROM date_range
 LEFT JOIN transactions ON date_range.day = CAST(transactions.date_block AS date)
+WHERE transactions.sender_address NOT IN (SELECT sys_address FROM exclude) AND transactions.recipient_address NOT IN (SELECT sys_address FROM exclude)
 GROUP BY date_range.day
 ORDER BY date_range.day
 LIMIT 730;
-
