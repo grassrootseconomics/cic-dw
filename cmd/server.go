@@ -20,7 +20,7 @@ func initHTTPServer() *echo.Echo {
 	}))
 
 	dashboard.InitDashboardApi(server, db, preparedQueries.dashboard)
-	public.InitPublicApi(server, db, batchBalance, preparedQueries.public)
+	public.InitPublicApi(server, db, batchBalance, cicnetClient, preparedQueries.public)
 
 	return server
 }

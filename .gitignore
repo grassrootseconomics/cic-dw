@@ -1,6 +1,6 @@
 .idea
 .env
 dev/dev-data
-migrations/*.env
+migrations/*prod*
 
 dist/
