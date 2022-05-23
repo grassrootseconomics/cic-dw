@@ -48,7 +48,7 @@ func handleBalancesQuery(c echo.Context) error {
 		tokenAddresses = append(tokenAddresses, w3.A(address.Checksum(rowData.TokenAddress)))
 	}
 
-	balances, err := api.c.TokensBalance(context.Background(), w3.A(address.Checksum(qAddress)), tokenAddresses)
+	balances, err := api.bb.TokensBalance(context.Background(), w3.A(address.Checksum(qAddress)), tokenAddresses)
 	if err != nil {
 		return err
 	}

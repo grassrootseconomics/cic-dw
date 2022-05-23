@@ -2,10 +2,11 @@ package dashboard
 
 import (
 	"context"
-	"github.com/georgysavva/scany/pgxscan"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"time"
+
+	"github.com/georgysavva/scany/pgxscan"
+	"github.com/labstack/echo/v4"
 )
 
 type lineChartRes struct {
@@ -15,7 +16,8 @@ type lineChartRes struct {
 
 func handleNewRegistrations(c echo.Context) error {
 	var (
-		api  = c.Get("api").(*api)
+		api = c.Get("api").(*api)
+
 		data []lineChartRes
 	)
 
@@ -35,7 +37,8 @@ func handleNewRegistrations(c echo.Context) error {
 
 func handleTransactionsCount(c echo.Context) error {
 	var (
-		api  = c.Get("api").(*api)
+		api = c.Get("api").(*api)
+
 		data []lineChartRes
 	)
 
@@ -47,6 +50,51 @@ func handleTransactionsCount(c echo.Context) error {
 	}
 
 	if err := pgxscan.ScanAll(&data, rows); err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, data)
+}
+
+func handleTokenTransactionsCount(c echo.Context) error {
+	var (
+		api   = c.Get("api").(*api)
+		token = c.Param("address")
+
+		data []lineChartRes
+	)
+
+	from, to := parseDateRange(c.QueryParams())
+
+	rows, err := api.db.Query(context.Background(), api.q["token-transactions-count"], from, to, token)
+	if err != nil {
+		return err
+	}
+
+	if err := pgxscan.ScanAll(&data, rows); err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, data)
+}
+
+func handleTokenVolume(c echo.Context) error {
+	var (
+		api   = c.Get("api").(*api)
+		token = c.Param("address")
+
+		data []lineChartRes
+	)
+
+	from, to := parseDateRange(c.QueryParams())
+
+	rows, err := api.db.Query(context.Background(), api.q["token-volume"], from, to, token)
+	if err != nil {
+		return err
+	}
+
+	if err := pgxscan.ScanAll(&data, rows); err != nil {
+
 		return err
 	}
 

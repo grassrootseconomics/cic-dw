@@ -6,7 +6,7 @@ require (
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/georgysavva/scany v0.3.0
 	github.com/golang-module/carbon/v2 v2.1.6
-	github.com/grassrootseconomics/cic-go v1.4.1
+	github.com/grassrootseconomics/cic-go v1.5.0
 	github.com/hibiken/asynq v0.23.0
 	github.com/jackc/pgx/v4 v4.16.1
 	github.com/knadh/koanf v1.4.1

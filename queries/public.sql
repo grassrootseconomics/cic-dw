@@ -17,3 +17,32 @@ WHERE tokens.id < $1 ORDER BY tokens.id ASC LIMIT $2;
 -- name: tokens-count
 -- Return total record count from individual i= tables/views
 SELECT COUNT(*) FROM tokens;
+
+
+--name: unique-token-holders
+-- Returns the unique token holders based on seen transactions
+WITH unique_holders AS (
+	SELECT sender_address AS holding_address FROM transactions
+  	WHERE token_address = $1
+  	UNION
+  	SELECT recipient_address AS holding_address FROM transactions
+  	WHERE token_address = $1
+),
+exclude AS (
+    SELECT sys_address FROM sys_accounts WHERE sys_address IS NOT NULL
+)
+
+SELECT COUNT(holding_address) FROM unique_holders
+WHERE holding_address NOT IN (SELECT sys_address FROM exclude);
+
+--name: all-time-token-transactions-count
+-- Returns transactions of individual tokens
+WITH exclude AS (
+    SELECT sys_address FROM sys_accounts WHERE sys_address IS NOT NULL
+)
+
+SELECT COUNT(*) FROM transactions
+WHERE token_address = $1
+AND transactions.sender_address NOT IN (SELECT sys_address FROM exclude)
+AND transactions.recipient_address NOT IN (SELECT sys_address FROM exclude)
+AND transactions.success = true;
