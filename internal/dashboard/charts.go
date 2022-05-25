@@ -1,6 +1,7 @@
 package dashboard
 
 import (
+	"cic-dw/pkg/date_range"
 	"context"
 	"net/http"
 	"time"
@@ -21,7 +22,7 @@ func handleNewRegistrations(c echo.Context) error {
 		data []lineChartRes
 	)
 
-	from, to := parseDateRange(c.QueryParams())
+	from, to := date_range.ParseDateRange(c.QueryParams())
 
 	rows, err := api.db.Query(context.Background(), api.q["new-user-registrations"], from, to)
 	if err != nil {
@@ -42,7 +43,7 @@ func handleTransactionsCount(c echo.Context) error {
 		data []lineChartRes
 	)
 
-	from, to := parseDateRange(c.QueryParams())
+	from, to := date_range.ParseDateRange(c.QueryParams())
 
 	rows, err := api.db.Query(context.Background(), api.q["transactions-count"], from, to)
 	if err != nil {
@@ -64,7 +65,7 @@ func handleTokenTransactionsCount(c echo.Context) error {
 		data []lineChartRes
 	)
 
-	from, to := parseDateRange(c.QueryParams())
+	from, to := date_range.ParseDateRange(c.QueryParams())
 
 	rows, err := api.db.Query(context.Background(), api.q["token-transactions-count"], from, to, token)
 	if err != nil {
@@ -86,7 +87,7 @@ func handleTokenVolume(c echo.Context) error {
 		data []lineChartRes
 	)
 
-	from, to := parseDateRange(c.QueryParams())
+	from, to := date_range.ParseDateRange(c.QueryParams())
 
 	rows, err := api.db.Query(context.Background(), api.q["token-volume"], from, to, token)
 	if err != nil {

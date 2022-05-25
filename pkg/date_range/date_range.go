@@ -1,11 +1,12 @@
-package dashboard
+package date_range
 
 import (
-	"github.com/golang-module/carbon/v2"
 	"net/url"
+
+	"github.com/golang-module/carbon/v2"
 )
 
-func parseDateRange(q url.Values) (string, string) {
+func ParseDateRange(q url.Values) (string, string) {
 	var from, to string
 
 	qFrom := q.Get("from")

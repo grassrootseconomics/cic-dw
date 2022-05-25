@@ -46,3 +46,10 @@ WHERE token_address = $1
 AND transactions.sender_address NOT IN (SELECT sys_address FROM exclude)
 AND transactions.recipient_address NOT IN (SELECT sys_address FROM exclude)
 AND transactions.success = true;
+
+
+--name: latest-token-transactions
+-- Returns latest token transactions, with curosr forward query and limit
+SELECT transactions.id, transactions.block_number, transactions.date_block, transactions.tx_hash, tokens.token_symbol, transactions.sender_address, transactions.recipient_address, transactions.tx_value, transactions.success FROM transactions
+INNER JOIN tokens ON transactions.token_address = tokens.token_address
+WHERE transactions.token_address = $1 AND transactions.id < $2 ORDER BY transactions.id DESC LIMIT $3;
