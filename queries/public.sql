@@ -45,10 +45,4 @@ SELECT COUNT(*) FROM transactions
 WHERE token_address = $1
 AND transactions.sender_address NOT IN (SELECT sys_address FROM exclude)
 AND transactions.recipient_address NOT IN (SELECT sys_address FROM exclude)
-AND transactions.success = true;
-
-
---name: latest-token-transactions
--- Returns latest token transactions, with curosr forward query and limit
-SELECT transactions.id, transactions.block_number, transactions.date_block, transactions.tx_hash, transactions.sender_address, transactions.recipient_address, transactions.tx_value, transactions.success FROM transactions
-WHERE transactions.token_address = $1 AND transactions.id < $2 ORDER BY transactions.id DESC LIMIT $3;
+AND transactions.success = true;	

@@ -28,4 +28,5 @@ func InitDashboardApi(e *echo.Echo, db *pgxpool.Pool, queries goyesql.Queries) {
 	g.GET("/transactions-count", handleTransactionsCount)
 	g.GET("/token-transactions-count/:address", handleTokenTransactionsCount)
 	g.GET("/token-volume/:address", handleTokenVolume)
+	g.GET("/latest-token-transactions/:address", handleLatestTokenTransactions)
 }

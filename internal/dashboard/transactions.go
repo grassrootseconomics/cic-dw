@@ -1,14 +1,12 @@
-package public
+package dashboard
 
 import (
-	"cic-dw/pkg/pagination"
 	"context"
 	"net/http"
 	"time"
 
 	"github.com/georgysavva/scany/pgxscan"
 	"github.com/labstack/echo/v4"
-	"github.com/rs/zerolog/log"
 )
 
 type tokenTransactionsRes struct {
@@ -22,33 +20,25 @@ type tokenTransactionsRes struct {
 	Success bool      `db:"success" json:"success"`
 }
 
-func handleTokenTransactions(c echo.Context) error {
+func handleLatestTokenTransactions(c echo.Context) error {
 	var (
 		api   = c.Get("api").(*api)
 		token = c.Param("address")
-		pg    = pagination.GetPagination(c.QueryParams())
 
 		data []tokenTransactionsRes
 	)
 
-	if pg.Cursor == -1 {
-		var max int64
-		if err := api.db.QueryRow(context.Background(), "SELECT MAX(id) + 10 from transactions").Scan(&max); err != nil {
-			return err
-		}
-
-		pg.Cursor = int(max)
-	}
-
-	log.Info().Msgf("%d", pg.Cursor)
-
-	rows, err := api.db.Query(context.Background(), api.q["latest-token-transactions"], token, pg.Cursor, pg.PerPage)
+	rows, err := api.db.Query(context.Background(), api.q["latest-token-transactions"], token)
 	if err != nil {
 		return err
 	}
 
 	if err := pgxscan.ScanAll(&data, rows); err != nil {
 		return err
+	}
+
+	if len(data) < 1 {
+		data = []tokenTransactionsRes{}
 	}
 
 	return c.JSON(http.StatusOK, data)

@@ -37,5 +37,4 @@ func InitPublicApi(e *echo.Echo, db *pgxpool.Pool, batchBalance *batch_balance.B
 	g.GET("/tokens", handleTokenListQuery)
 	g.GET("/token/:address", handleTokenInfo)
 	g.GET("/token-summary/:address", handleTokenSummary)
-	g.GET("/latest-token-transactions/:address", handleTokenTransactions)
 }
