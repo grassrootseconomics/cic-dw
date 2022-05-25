@@ -16,7 +16,6 @@ type tokenTransactionsRes struct {
 	Block   int64     `db:"block_number" json:"block"`
 	Date    time.Time `db:"date_block" json:"time"`
 	TxHash  string    `db:"tx_hash" json:"tx_hash"`
-	Token   string    `db:"token_symbol" json:"token_symbol"`
 	From    string    `db:"sender_address" json:"from"`
 	To      string    `db:"recipient_address" json:"to"`
 	Value   int64     `db:"tx_value" json:"tx_value"`

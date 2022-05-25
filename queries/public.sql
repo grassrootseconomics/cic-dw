@@ -50,6 +50,5 @@ AND transactions.success = true;
 
 --name: latest-token-transactions
 -- Returns latest token transactions, with curosr forward query and limit
-SELECT transactions.id, transactions.block_number, transactions.date_block, transactions.tx_hash, tokens.token_symbol, transactions.sender_address, transactions.recipient_address, transactions.tx_value, transactions.success FROM transactions
-INNER JOIN tokens ON transactions.token_address = tokens.token_address
+SELECT transactions.id, transactions.block_number, transactions.date_block, transactions.tx_hash, transactions.sender_address, transactions.recipient_address, transactions.tx_value, transactions.success FROM transactions
 WHERE transactions.token_address = $1 AND transactions.id < $2 ORDER BY transactions.id DESC LIMIT $3;
