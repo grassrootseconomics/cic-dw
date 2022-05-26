@@ -3,7 +3,7 @@ module cic-dw
 go 1.18
 
 require (
-	github.com/ethereum/go-ethereum v1.10.17
+	github.com/ethereum/go-ethereum v1.10.18
 	github.com/georgysavva/scany v0.3.0
 	github.com/golang-module/carbon/v2 v2.1.6
 	github.com/grassrootseconomics/cic-go v1.5.0
@@ -11,9 +11,10 @@ require (
 	github.com/jackc/pgx/v4 v4.16.1
 	github.com/knadh/koanf v1.4.1
 	github.com/labstack/echo/v4 v4.7.2
-	github.com/lmittmann/w3 v0.7.0
+	github.com/lmittmann/w3 v0.8.0
 	github.com/nleof/goyesql v1.0.1
 	github.com/rs/zerolog v1.26.1
+	golang.org/x/crypto v0.0.0-20220511200225-c6db032c6c88
 	golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6
 )
 
@@ -55,7 +56,6 @@ require (
 	github.com/tklauser/numcpus v0.2.2 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
-	golang.org/x/crypto v0.0.0-20220511200225-c6db032c6c88 // indirect
 	golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220411224347-583f2d630306 // indirect
