@@ -69,3 +69,8 @@ AND transactions.success = true
 GROUP BY date_range.day
 ORDER BY date_range.day
 LIMIT 730;
+
+--name: latest-token-transactions
+-- Returns latest token transactions, with curosr forward query and limit
+SELECT id, block_number, date_block, tx_hash, sender_address, recipient_address, tx_value, success FROM transactions
+WHERE token_address = $1 AND date_block > TIMESTAMP 'yesterday' ORDER BY id DESC;

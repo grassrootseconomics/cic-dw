@@ -45,4 +45,4 @@ SELECT COUNT(*) FROM transactions
 WHERE token_address = $1
 AND transactions.sender_address NOT IN (SELECT sys_address FROM exclude)
 AND transactions.recipient_address NOT IN (SELECT sys_address FROM exclude)
-AND transactions.success = true;
+AND transactions.success = true;	
