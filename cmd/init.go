@@ -46,6 +46,7 @@ type queries struct {
 	core      goyesql.Queries
 	dashboard goyesql.Queries
 	public    goyesql.Queries
+	admin     goyesql.Queries
 }
 
 func loadConfig(configFilePath string, k *koanf.Koanf) error {
@@ -137,10 +138,16 @@ func loadQueries(sqlFilesPath string) error {
 		return err
 	}
 
+	adminQueries, err := goyesql.ParseFile(fmt.Sprintf("%s/admin.sql", sqlFilesPath))
+	if err != nil {
+		return err
+	}
+
 	preparedQueries = &queries{
 		core:      coreQueries,
 		dashboard: dashboardQueries,
 		public:    publicQueries,
+		admin:     adminQueries,
 	}
 
 	return nil
