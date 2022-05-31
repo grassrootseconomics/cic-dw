@@ -26,3 +26,9 @@ enabled = true
 cache = "@every 20s"
 ussd  = "@every 30s"
 token = "@every 1m"
+
+[meta]
+endpoint = "http://cic-meta-server:8000"
+
+[jwt]
+secret = "0xd34db33f"
