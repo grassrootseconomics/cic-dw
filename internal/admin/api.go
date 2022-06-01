@@ -31,6 +31,7 @@ func InitAdminApi(e *echo.Echo, db *pgxpool.Pool, queries goyesql.Queries, metaC
 	g.Use(api.dwCoreMiddleware)
 	g.Use(api.verifyAuthMiddleware)
 
+	g.GET("/check", isLoggedIn)
 	g.GET("/meta-proxy/:address", handleMetaProxy)
 }
 

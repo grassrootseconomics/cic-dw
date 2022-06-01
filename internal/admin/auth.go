@@ -20,6 +20,10 @@ type jwtClaims struct {
 	jwt.StandardClaims
 }
 
+func isLoggedIn(c echo.Context) error {
+	return c.String(http.StatusOK, "ok")
+}
+
 func sendLoginJwtCookie(c echo.Context) error {
 	var (
 		api = c.Get("api").(*api)
@@ -55,11 +59,8 @@ func sendLoginJwtCookie(c echo.Context) error {
 		return err
 	}
 
-	cookie := new(http.Cookie)
-
-	cookie.Name = "_ge_auth"
+	cookie := cookieDefaults()
 	cookie.Value = tokenString
-	cookie.Path = "/"
 	cookie.Expires = expiration
 
 	c.SetCookie(cookie)
@@ -67,12 +68,21 @@ func sendLoginJwtCookie(c echo.Context) error {
 }
 
 func sendLogoutCookie(c echo.Context) error {
-	cookie := new(http.Cookie)
-
-	cookie.Name = "_ge_auth"
-	cookie.Value = ""
-	cookie.Expires = time.Now()
+	cookie := cookieDefaults()
+	cookie.MaxAge = -1
 
 	c.SetCookie(cookie)
 	return c.String(http.StatusOK, "logout successful")
+}
+
+func cookieDefaults() *http.Cookie {
+	cookie := new(http.Cookie)
+
+	cookie.Name = "_ge_auth"
+	cookie.Path =  "/"
+	cookie.SameSite = 3
+	cookie.HttpOnly = true
+	cookie.Secure = false
+
+	return cookie
 }
