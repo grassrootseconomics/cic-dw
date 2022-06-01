@@ -7,8 +7,8 @@ WITH current_ussd_cursor AS (
     SELECT id FROM cic_ussd.account WHERE blockchain_address = (SELECT cursor_pos FROM cursors WHERE id = 1)
 )
 
-INSERT INTO users (phone_number, blockchain_address, date_registered, failed_pin_attempts, ussd_account_status)
-SELECT cic_ussd.account.phone_number, cic_ussd.account.blockchain_address, cic_ussd.account.created, cic_ussd.account.failed_pin_attempts, cic_ussd.account.status
+INSERT INTO users (phone_number, blockchain_address, date_registered)
+SELECT cic_ussd.account.phone_number, cic_ussd.account.blockchain_address, cic_ussd.account.created
 FROM cic_ussd.account WHERE cic_ussd.account.id > (SELECT id FROM current_ussd_cursor) ORDER BY cic_ussd.account.id ASC LIMIT 300;
 
 UPDATE cursors SET cursor_pos = (SELECT blockchain_address FROM users ORDER BY id DESC LIMIT 1) WHERE cursors.id = 1;
