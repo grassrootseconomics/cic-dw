@@ -2,6 +2,8 @@ package admin
 
 import (
 	"bytes"
+	"cic-dw/pkg/address"
+	"context"
 	"encoding/base64"
 	"net/http"
 	"strings"
@@ -14,6 +16,40 @@ import (
 type metaRes struct {
 	Person meta.PersonResponse `json:"person"`
 	Name   string              `json:"name"`
+}
+
+func handlePhone2Address(c echo.Context) error {
+	var (
+		api   = c.Get("api").(*api)
+		phone = c.Param("phone")
+
+		address string
+	)
+
+	if err := api.db.QueryRow(context.Background(), api.q["phone-2-address"], phone).Scan(&address); err != nil {
+		return c.String(http.StatusNotFound, "phone not found")
+	}
+
+	return c.String(http.StatusOK, address)
+}
+
+func handleAddress2Phone(c echo.Context) error {
+	var (
+		api = c.Get("api").(*api)
+
+		phone string
+	)
+
+	sarafuAddress, err := address.SarafuAddress(c.Param("address"))
+	if err != nil {
+		return err
+	}
+
+	if err := api.db.QueryRow(context.Background(), api.q["address-2-phone"], sarafuAddress).Scan(&phone); err != nil {
+		return c.String(http.StatusNotFound, "address not found")
+	}
+
+	return c.String(http.StatusOK, phone)
 }
 
 func handleMetaProxy(c echo.Context) error {

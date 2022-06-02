@@ -8,7 +8,6 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/labstack/echo/v4"
 	"github.com/nleof/goyesql"
-	"github.com/rs/zerolog/log"
 )
 
 type api struct {
@@ -33,10 +32,12 @@ func InitAdminApi(e *echo.Echo, db *pgxpool.Pool, queries goyesql.Queries, metaC
 
 	g.GET("/check", isLoggedIn)
 	g.GET("/meta-proxy/:address", handleMetaProxy)
+	g.GET("/pin-status", handlePinStatus)
+	g.GET("/phone-2-address/:phone", handlePhone2Address)
+	g.GET("/address-2-phone/:address", handleAddress2Phone)
 }
 
 func newApi(db *pgxpool.Pool, queries goyesql.Queries, metaClient *meta.CicMeta, jwtKey string) *api {
-	log.Info().Msgf("%s inj", jwtKey)
 	return &api{
 		db:     db,
 		q:      queries,
