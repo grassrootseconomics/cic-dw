@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/ethereum/go-ethereum v1.10.18
-	github.com/georgysavva/scany v0.3.0
+	github.com/georgysavva/scany v1.0.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-module/carbon/v2 v2.1.8
 	github.com/grassrootseconomics/cic-go v1.5.0
