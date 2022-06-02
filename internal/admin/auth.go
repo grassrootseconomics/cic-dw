@@ -79,10 +79,10 @@ func cookieDefaults() *http.Cookie {
 	cookie := new(http.Cookie)
 
 	cookie.Name = "_ge_auth"
-	cookie.Path =  "/"
+	cookie.Path = "/"
 	cookie.SameSite = 3
 	cookie.HttpOnly = true
-	cookie.Secure = false
+	cookie.Secure = true
 
 	return cookie
 }
