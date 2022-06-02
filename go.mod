@@ -4,7 +4,8 @@ go 1.18
 
 require (
 	github.com/ethereum/go-ethereum v1.10.18
-	github.com/georgysavva/scany v0.3.0
+	github.com/georgysavva/scany v1.0.0
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-module/carbon/v2 v2.1.6
 	github.com/grassrootseconomics/cic-go v1.5.0
 	github.com/hibiken/asynq v0.23.0
@@ -12,6 +13,7 @@ require (
 	github.com/knadh/koanf v1.4.1
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/lmittmann/w3 v0.8.0
+	github.com/mapaiva/vcard-go v1.2.0
 	github.com/nleof/goyesql v1.0.1
 	github.com/rs/zerolog v1.26.1
 	golang.org/x/crypto v0.0.0-20220511200225-c6db032c6c88
@@ -29,8 +31,6 @@ require (
 	github.com/go-ole/go-ole v1.2.1 // indirect
 	github.com/go-redis/redis/v8 v8.11.2 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
-	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/golang-jwt/jwt/v4 v4.4.1 // indirect
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
@@ -43,7 +43,6 @@ require (
 	github.com/jackc/pgtype v1.11.0 // indirect
 	github.com/jackc/puddle v1.2.1 // indirect
 	github.com/labstack/gommon v0.3.1 // indirect
-	github.com/mapaiva/vcard-go v1.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
