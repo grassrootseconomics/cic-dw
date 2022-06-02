@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cic-dw/internal/admin"
 	"cic-dw/internal/dashboard"
 	"cic-dw/internal/public"
 
@@ -21,6 +22,7 @@ func initHTTPServer() *echo.Echo {
 
 	dashboard.InitDashboardApi(server, db, preparedQueries.dashboard)
 	public.InitPublicApi(server, db, batchBalance, cicnetClient, preparedQueries.public)
+	admin.InitAdminApi(server, db, preparedQueries.admin, metaClient, conf.Jwt.Secret)
 
 	return server
 }

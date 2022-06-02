@@ -8,6 +8,7 @@ import (
 	"time"
 
 	batch_balance "github.com/grassrootseconomics/cic-go/batch_balance"
+	"github.com/grassrootseconomics/cic-go/meta"
 	cic_net "github.com/grassrootseconomics/cic-go/net"
 	"github.com/grassrootseconomics/cic-go/provider"
 	"github.com/hibiken/asynq"
@@ -28,6 +29,7 @@ var (
 	rpcProvider     *provider.Provider
 	cicnetClient    *cic_net.CicNet
 	batchBalance    *batch_balance.BatchBalance
+	metaClient      *meta.CicMeta
 	rClient         asynq.RedisConnOpt
 )
 
@@ -59,9 +61,10 @@ func init() {
 	}
 
 	if err := parseRedis(conf.Db.Redis); err != nil {
-
 		log.Fatal().Err(err).Msg("could not parse redis connection string")
 	}
+
+	loadCicMeta(conf.Meta.Endpoint)
 }
 
 func main() {

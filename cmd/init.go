@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	batch_balance "github.com/grassrootseconomics/cic-go/batch_balance"
+	"github.com/grassrootseconomics/cic-go/meta"
 	cic_net "github.com/grassrootseconomics/cic-go/net"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -40,12 +41,19 @@ type config struct {
 		Enabled bool `koan:"enabled"`
 	}
 	Syncers map[string]string `koanf:"syncers"`
+	Meta    struct {
+		Endpoint string `koanf:"meta"`
+	}
+	Jwt struct {
+		Secret string `koanf:"secret"`
+	}
 }
 
 type queries struct {
 	core      goyesql.Queries
 	dashboard goyesql.Queries
 	public    goyesql.Queries
+	admin     goyesql.Queries
 }
 
 func loadConfig(configFilePath string, k *koanf.Koanf) error {
@@ -110,6 +118,10 @@ func loadCicNet(tokenIndex common.Address) error {
 	return nil
 }
 
+func loadCicMeta(metaEndpoint string) {
+	metaClient = meta.NewCicMeta(metaEndpoint)
+}
+
 func loadBatchBalance(balanceResolver common.Address) error {
 	var err error
 
@@ -137,10 +149,16 @@ func loadQueries(sqlFilesPath string) error {
 		return err
 	}
 
+	adminQueries, err := goyesql.ParseFile(fmt.Sprintf("%s/admin.sql", sqlFilesPath))
+	if err != nil {
+		return err
+	}
+
 	preparedQueries = &queries{
 		core:      coreQueries,
 		dashboard: dashboardQueries,
 		public:    publicQueries,
+		admin:     adminQueries,
 	}
 
 	return nil
