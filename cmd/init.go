@@ -42,7 +42,7 @@ type config struct {
 	}
 	Syncers map[string]string `koanf:"syncers"`
 	Meta    struct {
-		Endpoint string `koanf:"meta"`
+		Endpoint string `koanf:"endpoint"`
 	}
 	Jwt struct {
 		Secret string `koanf:"secret"`
