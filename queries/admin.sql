@@ -21,8 +21,8 @@ SELECT phone_number FROM users WHERE blockchain_address = $1;
 -- Returns a users transactions joining appropriate information across multiple tables
 -- Useful for full history traversal via API
 SELECT transactions.id, transactions.date_block, transactions.tx_hash, tokens.token_symbol, transactions.sender_address, transactions.recipient_address, transactions.tx_value, transactions.success,
-(SELECT phone_number FROM users WHERE blockchain_address = transactions.sender_address UNION ALL SELECT address_description FROM sys_accounts WHERE sys_address = transactions.sender_address) as custodial_sender_phone,
-(SELECT phone_number FROM users WHERE blockchain_address = transactions.recipient_address UNION ALL SELECT address_description FROM sys_accounts WHERE sys_address = transactions.recipient_address) as custodial_recipient_phone
+(SELECT phone_number FROM users WHERE blockchain_address = transactions.sender_address UNION ALL SELECT address_description FROM sys_accounts WHERE sys_address = transactions.sender_address) as sender_identifier,
+(SELECT phone_number FROM users WHERE blockchain_address = transactions.recipient_address UNION ALL SELECT address_description FROM sys_accounts WHERE sys_address = transactions.recipient_address) as recipient_identifier
 FROM transactions
 INNER JOIN users ON ((transactions.sender_address = users.blockchain_address) OR (transactions.recipient_address = users.blockchain_address))
 INNER JOIN tokens ON transactions.token_address = tokens.token_address
@@ -32,8 +32,8 @@ WHERE users.phone_number = $1 AND transactions.id > $2 ORDER BY transactions.id 
 -- Returns a users transactions joining appropriate information across multiple tables
 -- Useful for full history traversal via API
 SELECT transactions.id, transactions.date_block, transactions.tx_hash, tokens.token_symbol, transactions.sender_address, transactions.recipient_address, transactions.tx_value, transactions.success,
-(SELECT phone_number FROM users WHERE blockchain_address = transactions.sender_address UNION ALL SELECT address_description FROM sys_accounts WHERE sys_address = transactions.sender_address) as custodial_sender_phone,
-(SELECT phone_number FROM users WHERE blockchain_address = transactions.recipient_address UNION ALL SELECT address_description FROM sys_accounts WHERE sys_address = transactions.recipient_address) as custodial_recipient_phone
+(SELECT phone_number FROM users WHERE blockchain_address = transactions.sender_address UNION ALL SELECT address_description FROM sys_accounts WHERE sys_address = transactions.sender_address) as sender_identifier,
+(SELECT phone_number FROM users WHERE blockchain_address = transactions.recipient_address UNION ALL SELECT address_description FROM sys_accounts WHERE sys_address = transactions.recipient_address) as recipient_identifier
 FROM transactions
 INNER JOIN users ON ((transactions.sender_address = users.blockchain_address) OR (transactions.recipient_address = users.blockchain_address))
 INNER JOIN tokens ON transactions.token_address = tokens.token_address
@@ -42,8 +42,8 @@ WHERE users.phone_number = $1 AND transactions.id < $2 ORDER BY transactions.id 
 -- name: account-transactions-latest-by-token
 -- Retrieves latest transactions by a specific token with a limit
 SELECT transactions.id, transactions.date_block, transactions.tx_hash, tokens.token_symbol, transactions.sender_address, transactions.recipient_address, transactions.tx_value, transactions.success,
-(SELECT phone_number FROM users WHERE blockchain_address = transactions.sender_address UNION ALL SELECT address_description FROM sys_accounts WHERE sys_address = transactions.sender_address) as custodial_sender_phone,
-(SELECT phone_number FROM users WHERE blockchain_address = transactions.recipient_address UNION ALL SELECT address_description FROM sys_accounts WHERE sys_address = transactions.recipient_address) as custodial_recipient_phone
+(SELECT phone_number FROM users WHERE blockchain_address = transactions.sender_address UNION ALL SELECT address_description FROM sys_accounts WHERE sys_address = transactions.sender_address) as sender_identifier,
+(SELECT phone_number FROM users WHERE blockchain_address = transactions.recipient_address UNION ALL SELECT address_description FROM sys_accounts WHERE sys_address = transactions.recipient_address) as recipient_identifier
 FROM transactions
 INNER JOIN users ON ((transactions.sender_address = users.blockchain_address) OR (transactions.recipient_address = users.blockchain_address))
 INNER JOIN tokens ON transactions.token_address = tokens.token_address
