@@ -15,5 +15,5 @@ Some API endpoints use a modified cursor pagination. This is to avaoid uncessary
 The pagination expects the following query string:
 
 - `?per_page=` (int) - No. of items to return. Has a hard limit of 100
-- `?forward=` (boolean) - If true, scrolls forward else backwards
+- `?next=` (boolean) - If true, scrolls forward else backwards
 - `?cursor=` (id:int) - Used with the forward query. If pagination forwards, pass in the id of the last result i.e. `results[length(results) - 1]`. If paginating backwards pass the id of the first element of the current result set i.e. `results[0]`.
