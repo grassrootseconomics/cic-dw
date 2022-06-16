@@ -9,7 +9,6 @@ import (
 	"github.com/georgysavva/scany/pgxscan"
 	"github.com/jackc/pgx/v4"
 	"github.com/labstack/echo/v4"
-	"github.com/rs/zerolog/log"
 )
 
 type userTransactionRes struct {
@@ -35,8 +34,6 @@ func handleLatestTransactions(c echo.Context) error {
 		rows pgx.Rows
 		err  error
 	)
-
-	log.Info().Msgf("%v", pg)
 
 	if pg.FirstPage {
 		rows, err = api.db.Query(context.Background(), api.q["account-latest-transactions"], phone, pg.PerPage)
@@ -73,8 +70,6 @@ func handleLatestTransactionsByToken(c echo.Context) error {
 		rows pgx.Rows
 		err  error
 	)
-
-	log.Info().Msgf("%v", pg)
 
 	if pg.FirstPage {
 		rows, err = api.db.Query(context.Background(), api.q["account-latest-transactions-by-token"], phone, token, pg.PerPage)
