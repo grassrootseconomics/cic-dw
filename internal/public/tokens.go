@@ -2,7 +2,6 @@ package public
 
 import (
 	"cic-dw/pkg/address"
-	"cic-dw/pkg/pagination"
 	"context"
 	"net/http"
 
@@ -37,19 +36,11 @@ type tokenSummaryRes struct {
 func handleTokenListQuery(c echo.Context) error {
 	var (
 		api = c.Get("api").(*api)
-		pg  = pagination.GetPagination(c.QueryParams())
 
 		res []tokensRes
-		q   string
 	)
 
-	if pg.Forward {
-		q = api.q["list-tokens-fwd"]
-	} else {
-		q = api.q["list-tokens-bkwd"]
-	}
-
-	rows, err := api.db.Query(context.Background(), q, pg.Cursor, pg.PerPage)
+	rows, err := api.db.Query(context.Background(), api.q["list-tokens"])
 	if err != nil {
 		return err
 	}
