@@ -10,7 +10,7 @@ require (
 	github.com/grassrootseconomics/cic-go v1.5.0
 	github.com/hibiken/asynq v0.23.0
 	github.com/jackc/pgx/v4 v4.16.1
-	github.com/knadh/koanf v1.4.1
+	github.com/knadh/koanf v1.4.2
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/lmittmann/w3 v0.8.0
 	github.com/mapaiva/vcard-go v1.2.0
