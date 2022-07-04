@@ -16,7 +16,7 @@ type tokenCursor struct {
 	CursorPos string `db:"cursor_pos"`
 }
 
-func (s *Syncer) TokenSyncer(ctx context.Context, t *asynq.Task) error {
+func (s *Syncer) TokenSyncer(ctx context.Context, _ *asynq.Task) error {
 	var lastCursor tokenCursor
 
 	if err := pgxscan.Get(ctx, s.db, &lastCursor, s.queries["cursor-pos"], 3); err != nil {
