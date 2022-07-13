@@ -94,3 +94,39 @@ func handleLatestTransactionsByToken(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, data)
 }
+
+func handleLatestTransactionsByArchivedToken(c echo.Context) error {
+	var (
+		api   = c.Get("api").(*api)
+		phone = c.Param("phone")
+		token = c.Param("token")
+		pg    = pagination.GetPagination(c.QueryParams())
+
+		data []userTransactionRes
+		rows pgx.Rows
+		err  error
+	)
+
+	if pg.FirstPage {
+		rows, err = api.db.Query(context.Background(), api.q["account-latest-transactions-by-archived-token"], phone, token, pg.PerPage)
+		if err != nil {
+			return err
+		}
+	} else if pg.Next {
+		rows, err = api.db.Query(context.Background(), api.q["account-latest-transactions-by-archived-token-next"], phone, token, pg.Cursor, pg.PerPage)
+		if err != nil {
+			return err
+		}
+	} else {
+		rows, err = api.db.Query(context.Background(), api.q["account-latest-transactions-by-archived-token-previous"], phone, token, pg.Cursor, pg.PerPage)
+		if err != nil {
+			return err
+		}
+	}
+
+	if err := pgxscan.ScanAll(&data, rows); err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, data)
+}
