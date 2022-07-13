@@ -37,6 +37,7 @@ func InitAdminApi(e *echo.Echo, db *pgxpool.Pool, queries goyesql.Queries, metaC
 	g.GET("/address-2-phone/:address", handleAddress2Phone)
 	g.GET("/latest-transactions/:phone", handleLatestTransactions)
 	g.GET("/latest-transactions-by-token/:phone/:token", handleLatestTransactionsByToken)
+	g.GET("/latest-transactions-by-archived-token/:phone/:token", handleLatestTransactionsByArchivedToken)
 }
 
 func newApi(db *pgxpool.Pool, queries goyesql.Queries, metaClient *meta.CicMeta, jwtKey string) *api {
