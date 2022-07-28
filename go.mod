@@ -3,7 +3,7 @@ module cic-dw
 go 1.18
 
 require (
-	github.com/ethereum/go-ethereum v1.10.20
+	github.com/ethereum/go-ethereum v1.10.21
 	github.com/georgysavva/scany v1.0.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-module/carbon/v2 v2.1.8
