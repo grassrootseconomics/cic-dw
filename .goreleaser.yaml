@@ -23,8 +23,8 @@ dockers:
     ids:
     - cic-dw
     image_templates:
-    - "docker.grassecon.net/cic-dw/cic-dw:latest"
-    - "docker.grassecon.net/cic-dw/cic-dw:{{ .Tag }}"
+    - "ghcr.io/grassrootseconomics/cic-dw/cic-dw:latest"
+    - "ghcr.io/grassrootseconomics/cic-dw/cic-dw:{{ .Tag }}"
     dockerfile: Dockerfile
     extra_files:
     - config.toml
