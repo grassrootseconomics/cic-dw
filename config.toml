@@ -8,6 +8,7 @@ cors = [
     "https://dashboard.sarafu.network",
     "https://dashboard.grassecon.org",
     "https://dashboard.grassrootseconomics.org",
+    "https://dashboard.localvoucherscameroon.org",
     "http://localhost:3000"
 ]
 
