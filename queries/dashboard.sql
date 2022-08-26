@@ -17,7 +17,7 @@ LIMIT 730;
 -- This query generates a date range and left joins the users table to include days with no registrations
 -- Produces x, y results for displaying on a line chart
 WITH date_range AS (
-    SELECT day::date FROM generate_series('08-01-2022', '08-26-2022', INTERVAL '1 day') day
+    SELECT day::date FROM generate_series($1, $2, INTERVAL '1 day') day
 )
 
 SELECT date_range.day AS x, COUNT(users.id) AS y
@@ -47,12 +47,12 @@ GROUP BY date_range.day
 ORDER BY date_range.day
 LIMIT 730;
 
--- name: transaction-count-cmr
+-- name: transactions-count-cmr
 -- This is a patch to support CMR dashboard
 -- This query generates a date range and left joins the transactions table to include days with no transactions
 -- Produces x, y results for displaying on a line chart
 WITH date_range AS (
-    SELECT day::date FROM generate_series('08-01-2022', '08-26-2022', INTERVAL '1 day') day
+    SELECT day::date FROM generate_series($1, $2, INTERVAL '1 day') day
 ),
 exclude AS (
     SELECT sys_address FROM sys_accounts WHERE sys_address IS NOT NULL
