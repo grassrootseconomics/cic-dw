@@ -15,7 +15,7 @@ require (
 	github.com/lmittmann/w3 v0.8.1
 	github.com/mapaiva/vcard-go v1.2.0
 	github.com/nleof/goyesql v1.0.1
-	github.com/rs/zerolog v1.27.0
+	github.com/rs/zerolog v1.28.0
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a
 )
