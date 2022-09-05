@@ -9,7 +9,7 @@ require (
 	github.com/golang-module/carbon/v2 v2.1.9
 	github.com/grassrootseconomics/cic-go v1.5.0
 	github.com/hibiken/asynq v0.23.0
-	github.com/jackc/pgx/v4 v4.17.0
+	github.com/jackc/pgx/v4 v4.17.2
 	github.com/knadh/koanf v1.4.3
 	github.com/labstack/echo/v4 v4.8.0
 	github.com/lmittmann/w3 v0.8.1
@@ -41,7 +41,7 @@ require (
 	github.com/jackc/pgproto3/v2 v2.3.1 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
 	github.com/jackc/pgtype v1.12.0 // indirect
-	github.com/jackc/puddle v1.2.1 // indirect
+	github.com/jackc/puddle v1.3.0 // indirect
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
