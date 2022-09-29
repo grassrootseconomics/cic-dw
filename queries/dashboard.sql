@@ -58,7 +58,7 @@ exclude AS (
     SELECT sys_address FROM sys_accounts WHERE sys_address IS NOT NULL
 ),
 cmr_tokens AS (
-  	SELECT token_address from tokens WHERE token_symbol IN ('MBIP')
+  	SELECT token_address from tokens WHERE token_symbol IN ('MBIP', 'MUN')
 )
 SELECT date_range.day AS x, COUNT(transactions.id) AS y
 FROM date_range
