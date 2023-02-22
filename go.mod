@@ -11,13 +11,13 @@ require (
 	github.com/hibiken/asynq v0.23.0
 	github.com/jackc/pgx/v4 v4.17.0
 	github.com/knadh/koanf v1.4.3
-	github.com/labstack/echo/v4 v4.8.0
+	github.com/labstack/echo/v4 v4.10.2
 	github.com/lmittmann/w3 v0.8.1
 	github.com/mapaiva/vcard-go v1.2.0
 	github.com/nleof/goyesql v1.0.1
 	github.com/rs/zerolog v1.27.0
-	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa
-	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a
+	golang.org/x/crypto v0.6.0
+	golang.org/x/sys v0.5.0
 )
 
 require (
@@ -42,9 +42,9 @@ require (
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
 	github.com/jackc/pgtype v1.12.0 // indirect
 	github.com/jackc/puddle v1.2.1 // indirect
-	github.com/labstack/gommon v0.3.1 // indirect
-	github.com/mattn/go-colorable v0.1.12 // indirect
-	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/labstack/gommon v0.4.0 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
@@ -56,10 +56,10 @@ require (
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/tklauser/numcpus v0.2.2 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasttemplate v1.2.1 // indirect
-	golang.org/x/net v0.0.0-20220607020251-c690dde0001d // indirect
-	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/time v0.0.0-20220411224347-583f2d630306 // indirect
+	github.com/valyala/fasttemplate v1.2.2 // indirect
+	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
+	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 )
